@@ -6,8 +6,14 @@
 #define SET_MOVEMENT(side,f,b) digitalWrite( side[0], f);\
                                digitalWrite( side[1], b)
 
-const int RAMPING_TIME = 20;
-const int PER_CM_TIME = 25;
+#define RAMPING_TIME 20
+#define PER_CM_TIME 25
+#define IMPULSES_PER_CM 2
+
+extern volatile unsigned int cntLeft;
+extern volatile unsigned int cntRight;
+extern volatile long int intPeriod;
+extern volatile unsigned int spd;
 
 Wheels3::Wheels3(LiquidCrystal_I2C* display) {
   lcd = display;
@@ -49,12 +55,17 @@ void Wheels3::setSpeedLeft(uint8_t s)
     analogWrite(this->pinsLeft[2], s);
 }
 
+void Wheels3::speed(int s) 
+{
+    spd=s;
+    intPeriod = 50000000/s;
+}
+
 void Wheels3::setSpeed(uint8_t s)
 {
     setSpeedLeft(s);
     setSpeedRight(s);
-    unsigned long period = map(s, 60, 255, 600000, 200000); // im szybciej, tym szybciej beep
-    Timer1.setPeriod(period);
+
 }
 
 void Wheels3::attach(int pRF, int pRB, int pRS, int pLF, int pLB, int pLS)
@@ -120,22 +131,21 @@ void Wheels3::goForward(int cm)
 {
     if (cm < 1) return;
 
-    unsigned long duration = RAMPING_TIME + cm * PER_CM_TIME;
-    unsigned long startTime = millis();
-    unsigned long endTime = startTime + duration;
-    int remaining = cm;
+    uint8_t targetImpulses = cm * IMPULSES_PER_CM;
+    cntLeft = 0;
+    cntRight = 0;
 
     this->forward();
-    this->setSpeed(200);
+    Serial.println("Starting movement");
+    this->setSpeed(spd);
 
-    while (millis() < endTime) {
-        unsigned long now = millis();
-        remaining = (int)((endTime - now) / PER_CM_TIME); // przelicz na cm
-
+    while (cntLeft < targetImpulses || cntRight < targetImpulses) {
         lcd->setCursor(0, 0);
-        lcd->print("Pozostalo: ");
-        lcd->print(remaining);
-        lcd->print("cm  ");  // spacje czyszczą stare cyfry
+        lcd->print("L:");
+        lcd->print(cntLeft);
+        lcd->print(" R:");
+        lcd->print(cntRight);
+        lcd->print("     ");
 
         // animacja jazdy przód
         lcd->setCursor(0, 1);
@@ -150,6 +160,15 @@ void Wheels3::goForward(int cm)
     }
 
     this->stop();
+    Serial.println("Movement stopped");
+
+    lcd->setCursor(0, 0);
+    lcd->print("L:");
+    lcd->print(cntLeft);
+    lcd->print(" R:");
+    lcd->print(cntRight);
+    lcd->print("     ");
+
     lcd->setCursor(6, 1);
     lcd->print("   ");
     lcd->setCursor(0, 1);
@@ -169,24 +188,22 @@ void Wheels3::goBack(int cm)
 {
     if (cm < 1) return;
 
-    unsigned long duration = RAMPING_TIME + cm * PER_CM_TIME;
-    unsigned long startTime = millis();
-    unsigned long endTime = startTime + duration;
+    uint8_t targetImpulses = cm * IMPULSES_PER_CM;
+    cntLeft = 0;
+    cntRight = 0;
     Timer1.start(); // Uruchom beep
-    int remaining = cm;
 
     this->back();
-    this->setSpeed(200);
+    Serial.println("Starting movement");
+    this->setSpeed(spd);
 
-    while (millis() < endTime) {
-        unsigned long now = millis();
-        remaining = (int)((endTime - now) / PER_CM_TIME);
-
+    while (cntLeft < targetImpulses || cntRight < targetImpulses) {
         lcd->setCursor(0, 0);
-        lcd->print("Pozostalo: ");
-        lcd->print("-");
-        lcd->print(remaining);
-        lcd->print("cm  ");
+        lcd->print("L:");
+        lcd->print(cntLeft);
+        lcd->print(" R:");
+        lcd->print(cntRight);
+        lcd->print("     ");
 
         // animacja jazdy tył
         lcd->setCursor(0, 1);
@@ -200,8 +217,17 @@ void Wheels3::goBack(int cm)
     }
 
     this->stop();
+    Serial.println("Movement stopped");
     Timer1.stop(); // Zatrzymaj beep
     digitalWrite(_beepPin, LOW); // upewnij się że wyłączony
+
+    lcd->setCursor(0, 0);
+    lcd->print("L:");
+    lcd->print(cntLeft);
+    lcd->print(" R:");
+    lcd->print(cntRight);
+    lcd->print("     ");
+
     lcd->setCursor(6, 1);
     lcd->print("   ");
     lcd->setCursor(0, 1);

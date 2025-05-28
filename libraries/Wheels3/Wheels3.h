@@ -49,6 +49,7 @@ class Wheels3 {
          *   - minimalna efektywna wartość 60
          *      może zależeć od stanu naładowania baterii
          */
+        void speed(int);
         void setSpeed(uint8_t);
         void setSpeedRight(uint8_t);
         void setSpeedLeft(uint8_t);

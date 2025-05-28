@@ -142,6 +142,10 @@ void Wheels2::goForward(int cm)
     }
 
     this->stop();
+    lcd->setCursor(0, 0);
+    lcd->print("Pozostalo: ");
+    lcd->print(0);
+    lcd->print("cm  ");  // spacje czyszczą stare cyfry
     lcd->setCursor(6, 1);
     lcd->print("   ");
     lcd->setCursor(0, 1);
@@ -191,6 +195,10 @@ void Wheels2::goBack(int cm)
     }
 
     this->stop();
+    lcd->setCursor(0, 0);
+    lcd->print("Pozostalo: ");
+    lcd->print(0);
+    lcd->print("cm  ");  // spacje czyszczą stare cyfry
     lcd->setCursor(6, 1);
     lcd->print("   ");
     lcd->setCursor(0, 1);
