@@ -28,7 +28,7 @@ byte LCDAddress = 0x27;
 
 LiquidCrystal_I2C lcd(LCDAddress, 16, 2);
 
-Wheels6 w(&lcd);
+Wheels6 w(&lcd); 
 
 bool pinAccepted = false;
 const uint8_t correctPin[] = {67, 9, 25, 28}; // PIN: 6-9-0-OK
