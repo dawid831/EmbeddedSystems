@@ -16,12 +16,12 @@
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 
-#ifndef Wheels4_h
-#define Wheels4_h
+#ifndef Wheels6_h
+#define Wheels6_h
 
-class Wheels4 {
+class Wheels6 {
     public: 
-        Wheels4(LiquidCrystal_I2C* display);
+        Wheels6(LiquidCrystal_I2C* display);
         /*
          *  pinForward - wejście "naprzód" L298
          *  pinBack    - wejście "wstecz" L298
@@ -48,7 +48,6 @@ class Wheels4 {
          *   - minimalna efektywna wartość 60
          *      może zależeć od stanu naładowania baterii
          */
-        void speed(int);
         void setSpeed(uint8_t);
         void setSpeedRight(uint8_t);
         void setSpeedLeft(uint8_t);
@@ -57,11 +56,10 @@ class Wheels4 {
         * funkcje własne
         * ruch w zależności od czasu oraz odległości
         */
-        int sonarDistance(byte angle);
-        bool findObstacleFree();
-        int minDistForward();
         void goForward();
-        void goBack(int cm);
+        void goBack();
+        void turnLeft();
+        void turnRight();
 
 
     private:
@@ -69,5 +67,7 @@ class Wheels4 {
         int pinsRight[3];
         int pinsLeft[3];
 };
+
+
 
 #endif

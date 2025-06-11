@@ -1,6 +1,5 @@
-#include "Wheels5.h"
+#include "Wheels5Spacer.h"
 #include <Servo.h>
-#include <LiquidCrystal_I2C.h>
 
 // piny dla sonaru (HC-SR04)
 #define TRIG A2
@@ -11,7 +10,8 @@
 
 Servo serwo;
 
-Wheels5 w;
+Wheels5Spacer w;
+volatile char cmd;
 volatile unsigned int spd = 200;
 
 void setup() {
@@ -27,8 +27,9 @@ void setup() {
     /* patrz przed siebie */
     serwo.write(90);
 
-    Serial.println("Sprezyna");
-    w.spring();
+    Serial.println("Spacer!");
+    w.goForward();
 }
 
-void loop() {}
+void loop() 
+{ }

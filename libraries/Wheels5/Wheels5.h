@@ -16,12 +16,12 @@
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 
-#ifndef Wheels4_h
-#define Wheels4_h
+#ifndef Wheels5_h
+#define Wheels5_h
 
-class Wheels4 {
+class Wheels5 {
     public: 
-        Wheels4(LiquidCrystal_I2C* display);
+        Wheels5();
         /*
          *  pinForward - wejście "naprzód" L298
          *  pinBack    - wejście "wstecz" L298
@@ -57,15 +57,11 @@ class Wheels4 {
         * funkcje własne
         * ruch w zależności od czasu oraz odległości
         */
-        int sonarDistance(byte angle);
-        bool findObstacleFree();
-        int minDistForward();
-        void goForward();
-        void goBack(int cm);
+        int sonarDistance();
+        void spring();
 
 
     private:
-        LiquidCrystal_I2C* lcd;
         int pinsRight[3];
         int pinsLeft[3];
 };
